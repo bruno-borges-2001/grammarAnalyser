@@ -1,0 +1,15 @@
+N = { S, A, B, C }
+T = { a, b, c }
+P = {
+  S -> aSBC | D
+  D -> bDC | bc | E
+  E -> cE | c
+  CB -> BC
+  cB -> Bc
+  Cb -> bC
+  cb -> bc
+  bB -> bb
+  bC -> bc
+  cC -> cc
+}
+S = S
