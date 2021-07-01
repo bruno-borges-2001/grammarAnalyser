@@ -1,15 +1,9 @@
-N = { S, A, B, C }
-T = { a, b, c }
+N = { S, T, U, V }
+T = { a, b, c, d }
 P = {
-  S -> aSBC | D
-  D -> bDC | bc | E
-  E -> cE | c
-  CB -> BC
-  cB -> Bc
-  Cb -> bC
-  cb -> bc
-  bB -> bb
-  bC -> bc
-  cC -> cc
+S -> aSd | aTc | bVc | bUd | acd | bcd | c | d | cd
+T -> aTc | V | Tc | c
+U -> bUd | V | Ud | d
+V -> bVc | Vc | c
 }
 S = S

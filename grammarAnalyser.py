@@ -18,7 +18,8 @@ class ParseGrammar:
         read_lines = False
         production_lines = []
         for line in f.readlines():
-            parsed_line = line.replace("\n", "")
+            parsed_line = line.replace(
+                "\n", "").replace("epsilon", "*epsilon*")
             if parsed_line[0] == 'P':
                 read_lines = True
                 continue
@@ -34,13 +35,13 @@ class ParseGrammar:
             if parsed_line == "":
                 continue
 
-            if parsed_line[0] == 'N':
+            if parsed_line[0] == 'N' and not read_lines:
                 self.N = self.parse_set_from_line(parsed_line)
 
-            if parsed_line[0] == 'T':
+            if parsed_line[0] == 'T' and not read_lines:
                 self.T = self.parse_set_from_line(parsed_line)
 
-            if parsed_line[0] == 'S':
+            if parsed_line[0] == 'S' and not read_lines:
                 self.S = parsed_line.split("=")[1].replace(" ", "")
 
         f.close()
@@ -83,8 +84,8 @@ class Generation:
                 current_min = m
                 self.state = p
 
-    def done(self, T):
-        return find_char_from_list(self.string, T)
+    def done(self, N):
+        return not find_char_from_list(self.string, N)
 
     def remove_epsilon(self):
         self.string = self.string.replace(EPSILON, "")
@@ -122,6 +123,8 @@ class Grammar:
                     tipo = 1
 
                 if (tipo == 3):
+                    if (p == EPSILON):
+                        continue
                     if (len(p) == 1 and p[0] in self.T):
                         continue
                     elif (len(p) == 2 and p[0] in self.T and p[1] in self.N):
@@ -151,7 +154,7 @@ class Grammar:
             if (not gen.produce(p)):
                 continue
 
-            if (gen.done(self.T)):
+            if (gen.done(self.N)):
                 gen.remove_epsilon()
                 self.done.append(gen)
             else:
@@ -165,9 +168,9 @@ class Grammar:
         self.p_generations.append(Generation(self.S))
 
         while(len(self.p_generations) > 0 and len(self.done) < max_count):
-            current_generation = self.p_generations.pop(0)
+            self.current_generation = self.p_generations.pop(0)
 
-            self.step(current_generation)
+            self.step(self.current_generation)
 
         if (print_results):
             self.print_results()
@@ -175,35 +178,14 @@ class Grammar:
             return self.done
 
     def print_results(self):
-        file = open(self.name + '.txt', 'w+')
+        file = open(f'results/{self.name}.txt', 'w+')
         for i in range(len(self.done)):
-            file.write(str(i+1) + ": " + self.done[i].string + " = " +
-                       self.done[i].get_steps_string() + "\n")
+            file.write(
+                f'{i+1}: {self.done[i].string} ({len(self.done[i].string)}) = {self.done[i].get_steps_string()} \n')
         file.close()
 
 
 parser = ParseGrammar("teste.txt")
-g = Grammar(*parser.get_params())
+g = Grammar(*parser.get_params(), "nm leq pq'")
 print(g.identify())
-
-N = ["S"]
-T = ["a", "b"]
-P = {
-    "S": ["aSa", "bSb", "#"],
-}
-
-g = Grammar(N, T, P, N[0], "w#wr")
-print(g.identify())
-# g.generate()
-
-N = ["S", "A", "B", "C"]
-T = ["a", "b", "c"]
-P = {
-    "S": ["aA", "bB", "cS"],
-    "A": ["b", "aS", "bC", "cA"],
-    "B": ["a", "aC", "bS", "cB"],
-    "C": ["c", "aB", "bA", "cC"],
-}
-
-g = Grammar(N, T, P, "S")
-print(g.identify())
+g.generate()
