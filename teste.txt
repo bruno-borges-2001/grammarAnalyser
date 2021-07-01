@@ -1,9 +1,0 @@
-N = { S, T, U, V }
-T = { a, b, c, d }
-P = {
-S -> aSd | aTc | bVc | bUd | acd | bcd | c | d | cd
-T -> aTc | V | Tc | c
-U -> bUd | V | Ud | d
-V -> bVc | Vc | c
-}
-S = S
