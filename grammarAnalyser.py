@@ -12,6 +12,14 @@ def find_char_from_list(string, items):
     return False
 
 
+def count_char_from_list(string, items):
+    count = 0
+    for c in string:
+        if (c in items):
+            count += 1
+    return count
+
+
 class ParseGrammar:
     def __init__(self, file):
         f = open(file)
@@ -111,8 +119,15 @@ class Grammar:
         tipo = 3
         hasEpsilon = []
         for key, value in self.P.items():
+            if tipo == 0:
+                break
+
+            if count_char_from_list(key, self.T + self.N) > 1:
+                tipo = 1
+                break
+
             if find_char_from_list(key, self.T):
-                tipo = min(tipo, 1)
+                tipo = 1
                 break
 
             for p in value:
